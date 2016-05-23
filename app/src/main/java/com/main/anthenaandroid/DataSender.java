@@ -6,6 +6,8 @@ import android.widget.TextView;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -13,23 +15,24 @@ import java.net.UnknownHostException;
  * Created by ruffy0002_2 on 21/5/2016.
  */
 public class DataSender implements Runnable {
-    EditText textOut;
+    GamePacket p = new GamePacket();
     TextView textIn;
 
-    public DataSender (EditText _textout) {
-        textOut = _textout;
+    public DataSender (float x, float y) {
+        p.setX(x);
+        p.setY(y);
     }
 
     public void run () {
         Socket socket = null;
-        DataOutputStream dataOutputStream = null;
-        DataInputStream dataInputStream = null;
+        ObjectOutputStream dataOutputStream = null;
+        ObjectInputStream dataInputStream = null;
 
         try {
             socket = new Socket("192.168.2.104", 1356);
-            dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            dataInputStream = new DataInputStream(socket.getInputStream());
-            dataOutputStream.writeUTF(textOut.getText().toString());
+            dataOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            dataInputStream = new ObjectInputStream(socket.getInputStream());
+            dataOutputStream.writeObject(new BroadcastPacket());
             //textIn.setText(dataInputStream.readUTF());
         } catch (UnknownHostException e) {
             e.printStackTrace();

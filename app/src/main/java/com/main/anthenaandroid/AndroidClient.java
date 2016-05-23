@@ -37,7 +37,7 @@ public class AndroidClient extends Activity {
 
         @Override
         public void onClick(View arg0) {
-            DataSender ds = new DataSender(textOut);
+            DataSender ds = new DataSender(0.2f,0.2f);
             Thread thread = new Thread(ds);
             thread.start();
         }
