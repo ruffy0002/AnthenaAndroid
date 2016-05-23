@@ -32,7 +32,7 @@ public class DataSender implements Runnable {
             socket = new Socket("192.168.2.104", 1356);
             dataOutputStream = new ObjectOutputStream(socket.getOutputStream());
             dataInputStream = new ObjectInputStream(socket.getInputStream());
-            dataOutputStream.writeObject(new BroadcastPacket());
+            dataOutputStream.writeObject(p);
             //textIn.setText(dataInputStream.readUTF());
         } catch (UnknownHostException e) {
             e.printStackTrace();

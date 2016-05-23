@@ -3,6 +3,8 @@ package com.main.anthenaandroid;
 import java.io.Serializable;
 
 public class GamePacket implements Serializable {
+
+    static final long serialVersionUID = 568750792;
     private float x;
     private float y;
     public float getX() {

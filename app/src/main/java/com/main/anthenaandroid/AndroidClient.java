@@ -42,4 +42,10 @@ public class AndroidClient extends Activity {
             thread.start();
         }
     };
+
+    public void sendStomp (float x, float y){
+        DataSender ds = new DataSender(x,y);
+        Thread thread = new Thread(ds);
+        thread.start();
+    }
 }
