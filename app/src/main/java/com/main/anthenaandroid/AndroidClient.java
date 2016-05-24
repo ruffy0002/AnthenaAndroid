@@ -10,9 +10,12 @@ import java.net.UnknownHostException;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 public class AndroidClient extends Activity {
@@ -30,6 +33,16 @@ public class AndroidClient extends Activity {
         Button buttonSend = (Button)findViewById(R.id.send);
         textIn = (TextView)findViewById(R.id.textin);
         buttonSend.setOnClickListener(buttonSendOnClickListener);
+        FrameLayout flWebPre = (FrameLayout) findViewById(R.id.DummyFrame);
+        flWebPre.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v,MotionEvent event) {
+
+                sendStomp(event.getX(),event.getY());
+                return true;
+            }
+        });
     }
 
     Button.OnClickListener buttonSendOnClickListener
@@ -42,6 +55,9 @@ public class AndroidClient extends Activity {
             thread.start();
         }
     };
+
+
+
 
     public void sendStomp (float x, float y){
         DataSender ds = new DataSender(x,y);
