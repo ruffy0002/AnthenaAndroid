@@ -29,7 +29,7 @@ public class DataSender implements Runnable {
         ObjectInputStream dataInputStream = null;
 
         try {
-            socket = new Socket("192.168.2.104", 1356);
+            socket = new Socket("10.104.64.13", 1356);
             dataOutputStream = new ObjectOutputStream(socket.getOutputStream());
             dataInputStream = new ObjectInputStream(socket.getInputStream());
             dataOutputStream.writeObject(p);

@@ -27,12 +27,12 @@ public class AndroidClient extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_fullscreen);
 
         textOut = (EditText)findViewById(R.id.textout);
-        Button buttonSend = (Button)findViewById(R.id.send);
+        //Button buttonSend = (Button)findViewById(R.id.send);
         textIn = (TextView)findViewById(R.id.textin);
-        buttonSend.setOnClickListener(buttonSendOnClickListener);
+        //buttonSend.setOnClickListener(buttonSendOnClickListener);
         FrameLayout flWebPre = (FrameLayout) findViewById(R.id.DummyFrame);
         flWebPre.setOnTouchListener(new View.OnTouchListener() {
 
