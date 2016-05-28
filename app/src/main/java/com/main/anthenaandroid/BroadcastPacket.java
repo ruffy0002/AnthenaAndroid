@@ -7,4 +7,13 @@ import java.io.Serializable;
  */
 public class BroadcastPacket implements Serializable{
     static final long serialVersionUID = 568750792;
+    public boolean isServer;
+
+    public BroadcastPacket (boolean isServer) {
+        this.isServer = isServer;
+    }
+
+    boolean isServer() {
+        return isServer;
+    }
 }

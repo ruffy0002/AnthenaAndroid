@@ -23,6 +23,8 @@ public class AndroidClient extends Activity {
     EditText textOut;
     TextView textIn;
 
+    RoomFinder rf;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,9 +32,9 @@ public class AndroidClient extends Activity {
         setContentView(R.layout.activity_fullscreen);
 
         textOut = (EditText)findViewById(R.id.textout);
-        //Button buttonSend = (Button)findViewById(R.id.send);
+        Button buttonSend = (Button)findViewById(R.id.dummy_button);
         textIn = (TextView)findViewById(R.id.textin);
-        //buttonSend.setOnClickListener(buttonSendOnClickListener);
+        buttonSend.setOnClickListener(buttonSendOnClickListener);
         FrameLayout flWebPre = (FrameLayout) findViewById(R.id.DummyFrame);
         flWebPre.setOnTouchListener(new View.OnTouchListener() {
 
@@ -50,18 +52,16 @@ public class AndroidClient extends Activity {
 
         @Override
         public void onClick(View arg0) {
-            DataSender ds = new DataSender(0.2f,0.2f);
-            Thread thread = new Thread(ds);
+            System.out.println("Finding room");
+            rf = new RoomFinder();
+            Thread thread = new Thread(rf);
             thread.start();
         }
     };
 
-
-
-
     public void sendStomp (float x, float y){
-        DataSender ds = new DataSender(x,y);
-        Thread thread = new Thread(ds);
-        thread.start();
+        if (rf != null) {
+            rf.sendStomp(x,y);
+        }
     }
 }

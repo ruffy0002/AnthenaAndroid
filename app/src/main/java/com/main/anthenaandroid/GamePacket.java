@@ -5,6 +5,11 @@ import java.io.Serializable;
 public class GamePacket implements Serializable {
 
     static final long serialVersionUID = 568750792;
+
+    public GamePacket (float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
     private float x;
     private float y;
     public float getX() {
