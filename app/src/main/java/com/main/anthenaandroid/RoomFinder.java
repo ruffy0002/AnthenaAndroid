@@ -42,6 +42,11 @@ public class RoomFinder implements Runnable{
     ObjectOutputStream dataOutputStream = null;
     ObjectInputStream dataInputStream = null;
 
+    boolean connected = false;
+
+    long retryTimer = 0;
+    private static final int RETRY_DELAY = 2000;
+
     public void sendStomp (float x, float y) {
         if(isRoomFound) {
             GamePacket newPacket = new GamePacket(x, y);
@@ -129,26 +134,37 @@ public class RoomFinder implements Runnable{
 
         startTCPStream();
         while(running) {
-            if(packetQueue.size() > 0) {
-                try {
-                    dataOutputStream.writeObject(packetQueue.poll());
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+            if(connected) {
+                if (packetQueue.size() > 0) {
+                    try {
+                        dataOutputStream.writeObject(packetQueue.poll());
+                        System.out.println("Sending a packet");
+                    } catch (IOException ex) {
+                        System.out.println("Disconnected from server");
+                        connected = false;
+                    }
                 }
+            } else {
+                startTCPStream();
             }
         }
     }
 
     public void startTCPStream () {
-        try {
-            socket = new Socket(_ipToSend, _portNo);
-            dataOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            dataInputStream = new ObjectInputStream(socket.getInputStream());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+        if(System.currentTimeMillis() > retryTimer) {
+            try {
+                socket = new Socket(_ipToSend, _portNo);
+                dataOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                dataInputStream = new ObjectInputStream(socket.getInputStream());
+                connected = true;
+                System.out.println("Connected to server");
+            } catch (UnknownHostException e) {
+                System.out.println("Connection failed, retrying in " + RETRY_DELAY + " seconds");
+                retryTimer = System.currentTimeMillis() + RETRY_DELAY;
+            } catch (IOException e) {
+                System.out.println("Connection failed, retrying in " + RETRY_DELAY + " seconds");
+                retryTimer = System.currentTimeMillis() + RETRY_DELAY;
+            }
         }
     }
 
