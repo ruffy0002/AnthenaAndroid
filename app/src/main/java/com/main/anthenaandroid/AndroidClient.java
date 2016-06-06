@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,7 +32,7 @@ public class AndroidClient extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fullscreen);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         textOut = (EditText)findViewById(R.id.textout);
         Button buttonSend = (Button)findViewById(R.id.dummy_button);
         Button buttonData = (Button)findViewById(R.id.data_button);
@@ -54,10 +56,13 @@ public class AndroidClient extends Activity {
 
         @Override
         public void onClick(View arg0) {
+            /*
             System.out.println("Finding room");
             rf = new RoomFinder();
             Thread thread = new Thread(rf);
-            thread.start();
+            thread.start();*/
+            Intent i = new Intent(getApplicationContext(), FullscreenActivity.class);
+            startActivity(i);
         }
     };
 
