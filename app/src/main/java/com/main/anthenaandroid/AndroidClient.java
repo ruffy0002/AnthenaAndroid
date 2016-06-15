@@ -33,8 +33,10 @@ public class AndroidClient extends Activity {
 
         textOut = (EditText)findViewById(R.id.textout);
         Button buttonSend = (Button)findViewById(R.id.dummy_button);
-        textIn = (TextView)findViewById(R.id.textin);
+        Button buttonData = (Button)findViewById(R.id.data_button);
+        textIn = (TextView)findViewById(R.id.feedbackText);
         buttonSend.setOnClickListener(buttonSendOnClickListener);
+        buttonData.setOnClickListener(buttonDataOnClickListener);
         FrameLayout flWebPre = (FrameLayout) findViewById(R.id.DummyFrame);
         flWebPre.setOnTouchListener(new View.OnTouchListener() {
 
@@ -56,6 +58,23 @@ public class AndroidClient extends Activity {
             rf = new RoomFinder();
             Thread thread = new Thread(rf);
             thread.start();
+        }
+    };
+
+    Button.OnClickListener buttonDataOnClickListener
+            = new Button.OnClickListener(){
+
+        @Override
+        public void onClick(View arg0) {
+
+            if (rf != null) {
+                if(rf.hasDataFromServer()) {
+                    GamePacket tem = rf.getDataFromServer();
+                    textIn.setText(tem.getX() + ", " + tem.getY());
+                } else {
+                    textIn.setText("No data");
+                }
+            }
         }
     };
 

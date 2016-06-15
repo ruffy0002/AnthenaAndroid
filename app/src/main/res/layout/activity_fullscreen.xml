@@ -46,6 +46,21 @@
                 android:text="@string/dummy_button" />
 
         </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Check for data"
+            android:id="@+id/data_button"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Placeholder text"
+            android:id="@+id/feedbackText"
+            android:layout_gravity="center_horizontal|top" />
     </FrameLayout>
 
 </FrameLayout>

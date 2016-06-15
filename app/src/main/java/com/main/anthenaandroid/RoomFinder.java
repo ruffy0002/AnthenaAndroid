@@ -35,6 +35,7 @@ public class RoomFinder implements Runnable{
     boolean isRoomFound = false;
 
     Queue<GamePacket> packetQueue = new LinkedList<GamePacket>();
+    Queue<GamePacket> rcvedPacketQueue = new LinkedList<GamePacket>();
     private InetAddress _ipToSend;
     private int _portNo;
 
@@ -135,17 +136,52 @@ public class RoomFinder implements Runnable{
         startTCPStream();
         while(running) {
             if(connected) {
-                if (packetQueue.size() > 0) {
-                    try {
-                        dataOutputStream.writeObject(packetQueue.poll());
-                        System.out.println("Sending a packet");
-                    } catch (IOException ex) {
-                        System.out.println("Disconnected from server");
-                        connected = false;
-                    }
-                }
+                rcvData();
+                sendData();
             } else {
                 startTCPStream();
+            }
+        }
+    }
+
+    private void rcvData() {
+        Object tmp;
+        try {
+            tmp = dataInputStream.readObject();
+            if(tmp instanceof GamePacket) {
+                transferGameDataToProgram((GamePacket) tmp);
+            }
+        } catch (IOException e) {
+
+        } catch (ClassNotFoundException e) {
+
+        }
+    }
+
+    private void transferGameDataToProgram (GamePacket gameData) {
+        rcvedPacketQueue.add(gameData);
+    }
+
+    public boolean hasDataFromServer () {
+        if(rcvedPacketQueue.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public GamePacket getDataFromServer () {
+        return rcvedPacketQueue.poll();
+    }
+
+    private void sendData() {
+        if (packetQueue.size() > 0) {
+            try {
+                dataOutputStream.writeObject(packetQueue.poll());
+                System.out.println("Sending a packet");
+            } catch (IOException ex) {
+                System.out.println("Disconnected from server");
+                connected = false;
             }
         }
     }
@@ -156,6 +192,7 @@ public class RoomFinder implements Runnable{
                 socket = new Socket(_ipToSend, _portNo);
                 dataOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 dataInputStream = new ObjectInputStream(socket.getInputStream());
+                socket.setSoTimeout(100);
                 connected = true;
                 System.out.println("Connected to server");
             } catch (UnknownHostException e) {
