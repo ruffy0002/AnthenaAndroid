@@ -56,11 +56,9 @@ public class AndroidClient extends Activity {
 
         @Override
         public void onClick(View arg0) {
-            /*
-            System.out.println("Finding room");
-            rf = new RoomFinder();
-            Thread thread = new Thread(rf);
-            thread.start();*/
+
+
+
             Intent i = new Intent(getApplicationContext(), FullscreenActivity.class);
             startActivity(i);
         }

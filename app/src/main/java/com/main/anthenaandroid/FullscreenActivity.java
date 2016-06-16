@@ -5,8 +5,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -32,6 +34,8 @@ public class FullscreenActivity extends AppCompatActivity {
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
+
+    RoomFinder rf;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -105,13 +109,37 @@ public class FullscreenActivity extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
+
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        System.out.println("Finding room");
+        rf = new RoomFinder();
+        Thread thread = new Thread(rf);
+        thread.start();
+        FrameLayout flWebPre = (FrameLayout) findViewById(R.id.Dummy);
+
+        flWebPre.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v,MotionEvent event) {
+                DisplayMetrics displaymetrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+                int height = displaymetrics.heightPixels;
+                int width = displaymetrics.widthPixels;
+                float percentX = event.getX()/(float)height;
+                float percentY = event.getY()/(float)width;
+                sendStomp(percentX,percentY);
+                return true;
+            }
+        });
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
+        System.out.println("Finding room");
+        rf = new RoomFinder();
+        Thread thread = new Thread(rf);
+        thread.start();
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
@@ -159,5 +187,11 @@ public class FullscreenActivity extends AppCompatActivity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    public void sendStomp (float x, float y){
+        if (rf != null) {
+            rf.sendStomp(x,y);
+        }
     }
 }
