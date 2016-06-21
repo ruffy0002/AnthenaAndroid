@@ -80,7 +80,12 @@ public class DataSender implements Runnable {
     }
 
     public void sendStomp (float x, float y) {
-        GamePacket newPacket = new GamePacket(x,y);
+        GamePacket newPacket = new GamePacket(x,y,GamePacket.TYPE_STOMPER);
+        packetQueue.add(newPacket);
+    }
+
+    public void sendMovement (float x, float y) {
+        GamePacket newPacket = new GamePacket(x,y,GamePacket.TYPE_RUNNER);
         packetQueue.add(newPacket);
     }
 }

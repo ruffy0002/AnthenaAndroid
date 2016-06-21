@@ -48,9 +48,28 @@ public class RoomFinder implements Runnable{
     long retryTimer = 0;
     private static final int RETRY_DELAY = 2000;
 
+    public static final int TYPE_STOMPER = 0;
+    public static final int TYPE_RUNNER = 1;
+    public int type = TYPE_STOMPER;
+
+    /**
+     * Default type would be stomper
+     * @param type - RoomFinder.TYPE_STOMPER, RoomFinder.TYPE_RUNNER
+     */
+    public RoomFinder (int type) {
+        this.type = type;
+    }
+
     public void sendStomp (float x, float y) {
         if(isRoomFound) {
-            GamePacket newPacket = new GamePacket(x, y);
+            GamePacket newPacket = new GamePacket(x, y, GamePacket.TYPE_STOMPER);
+            packetQueue.add(newPacket);
+        }
+    }
+
+    public void sendMovement (float x, float y) {
+        if(isRoomFound) {
+            GamePacket newPacket = new GamePacket(x, y, GamePacket.TYPE_RUNNER);
             packetQueue.add(newPacket);
         }
     }
@@ -194,6 +213,8 @@ public class RoomFinder implements Runnable{
                 dataInputStream = new ObjectInputStream(socket.getInputStream());
                 socket.setSoTimeout(100);
                 connected = true;
+                //Initialisation packet to let server know what kind of player this is
+                sendInitialisationPacket();
                 System.out.println("Connected to server");
             } catch (UnknownHostException e) {
                 System.out.println("Connection failed, retrying in " + RETRY_DELAY + " seconds");
@@ -202,6 +223,14 @@ public class RoomFinder implements Runnable{
                 System.out.println("Connection failed, retrying in " + RETRY_DELAY + " seconds");
                 retryTimer = System.currentTimeMillis() + RETRY_DELAY;
             }
+        }
+    }
+
+    private void sendInitialisationPacket() {
+        if(type == GamePacket.TYPE_STOMPER) {
+            sendStomp(-1000,-1000);
+        } else if(type == GamePacket.TYPE_RUNNER) {
+            sendMovement(-1000,-1000);
         }
     }
 
