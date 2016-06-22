@@ -59,6 +59,9 @@ public class RoomFinder implements Runnable{
     public RoomFinder (int type) {
         this.type = type;
     }
+    public RoomFinder () {
+        this.type = RoomFinder.TYPE_STOMPER;
+    }
 
     public void sendStomp (float x, float y) {
         if(isRoomFound) {
