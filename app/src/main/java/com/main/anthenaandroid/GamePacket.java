@@ -31,6 +31,8 @@ public class GamePacket implements Serializable {
     public static int TYPE_STOMPER = 0;
     public static int TYPE_RUNNER = 1;
     public static int TYPE_POSITIONUPDATE = 2;
+    public static int TYPE_TYPECHANGE = 3;
+    public static int TYPE_GAMEEND = 4;
 
     public float getX() {
         return x;
