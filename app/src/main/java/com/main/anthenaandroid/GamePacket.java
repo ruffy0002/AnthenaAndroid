@@ -15,8 +15,9 @@ public class GamePacket implements Serializable {
      *
      * @param x
      * @param y
-     * @param type which type of packet this is, GamePacket.TYPE_STOMPER or GamePacket.TYPE_RUNNER
-     *             or GamePacket.TYPE_POSITIONUPDATE
+     * @param type which type of packet this is, GamePacket.TYPE_STOMPER, GamePacket.TYPE_RUNNER
+     *             or GamePacket.TYPE_POSITIONUPDATE etc, see the declared public static varaibles
+     *             in this class
      */
     public GamePacket (float x, float y, int type) {
         this.x = x;

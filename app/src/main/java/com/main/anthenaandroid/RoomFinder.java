@@ -29,7 +29,6 @@ public class RoomFinder implements Runnable{
     int portNo = 1355;
     int dataPortNo = 1356;
     boolean roomFound = false;
-    DataSender ds = null;
     boolean running = true;
 
     boolean isRoomFound = false;
@@ -47,6 +46,7 @@ public class RoomFinder implements Runnable{
 
     long retryTimer = 0;
     private static final int RETRY_DELAY = 2000;
+    private static final int SOCKET_TIMEOUT_DURATION = 100;
 
     public static final int TYPE_STOMPER = 0;
     public static final int TYPE_RUNNER = 1;
@@ -63,6 +63,11 @@ public class RoomFinder implements Runnable{
         this.type = RoomFinder.TYPE_STOMPER;
     }
 
+    /**
+     * Sends a stomp at the coordinates specified towards the server at the next loop
+     * @param x
+     * @param y
+     */
     public void sendStomp (float x, float y) {
         if(isRoomFound) {
             GamePacket newPacket = new GamePacket(x, y, GamePacket.TYPE_STOMPER);
@@ -70,6 +75,11 @@ public class RoomFinder implements Runnable{
         }
     }
 
+    /**
+     * Sends a movement packet ot the coordinates specified towards the server at the next loop
+     * @param x
+     * @param y
+     */
     public void sendMovement (float x, float y) {
         if(isRoomFound) {
             GamePacket newPacket = new GamePacket(x, y, GamePacket.TYPE_RUNNER);
@@ -77,6 +87,11 @@ public class RoomFinder implements Runnable{
         }
     }
 
+    /**
+     * Broadcasts and establishes a TCP connection to an anthena server, then starts an infinite
+     * loop of getting and sending data to the server every socket timeout. Sends 1 packet everytime
+     * the socket times out
+     */
     public void run (){
         // Find the server using UDP broadcast
         try {
@@ -166,6 +181,9 @@ public class RoomFinder implements Runnable{
         }
     }
 
+    /**
+     * Gets data from the TCP socket until sockettimeout occurs
+     */
     private void rcvData() {
         Object tmp;
         try {
@@ -180,10 +198,19 @@ public class RoomFinder implements Runnable{
         }
     }
 
+    /**
+     * Sends the recieved data into a queue to be retrieved from the main program. Edit in this
+     * function if the data was to be sent directly to the main activity
+     */
     private void transferGameDataToProgram (GamePacket gameData) {
         rcvedPacketQueue.add(gameData);
     }
 
+    /**
+     * Checks if there is data sent from the server
+     *
+     * @return true if there is data, false otherwise
+     */
     public boolean hasDataFromServer () {
         if(rcvedPacketQueue.size() > 0) {
             return true;
@@ -192,10 +219,19 @@ public class RoomFinder implements Runnable{
         }
     }
 
+    /**
+     * Gets GamePacket data that is sent from the server, use hasDataFromServer prior to this to
+     * check if there is data to be retrieved
+     *
+     * @return
+     */
     public GamePacket getDataFromServer () {
         return rcvedPacketQueue.poll();
     }
 
+    /*
+        Sends the queued data to the server at each cycle
+     */
     private void sendData() {
         if (packetQueue.size() > 0) {
             try {
@@ -208,13 +244,17 @@ public class RoomFinder implements Runnable{
         }
     }
 
+    /**
+     * Intialises a TCP connection to the server found in the broadcast, or reconnects to the server
+     * via TCP
+     */
     public void startTCPStream () {
         if(System.currentTimeMillis() > retryTimer) {
             try {
                 socket = new Socket(_ipToSend, _portNo);
                 dataOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 dataInputStream = new ObjectInputStream(socket.getInputStream());
-                socket.setSoTimeout(100);
+                socket.setSoTimeout(SOCKET_TIMEOUT_DURATION);
                 connected = true;
                 //Initialisation packet to let server know what kind of player this is
                 sendInitialisationPacket();
@@ -229,6 +269,10 @@ public class RoomFinder implements Runnable{
         }
     }
 
+    /**
+     * Sends a packet to let the server know what kind of player this is. Uses -1000,-1000 as a
+     * reserved value for x,y for initialisation
+     */
     private void sendInitialisationPacket() {
         if(type == GamePacket.TYPE_STOMPER) {
             sendStomp(-1000,-1000);
