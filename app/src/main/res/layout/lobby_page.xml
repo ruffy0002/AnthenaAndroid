@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc">
+    android:background="#0099cc"
+    tools:context=".LobbyActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
@@ -24,8 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        android:clickable="true"
-        android:id="@+id/DummyFrame">
+        android:id="@+id/Dummy">
 
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
@@ -37,30 +37,36 @@
             android:orientation="horizontal"
             tools:ignore="UselessParent">
 
-            <Button
-                android:id="@+id/dummy_button"
-                style="?metaButtonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dummy_button" />
-
         </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Check for data"
-            android:id="@+id/data_button"
-            android:layout_gravity="center" />
+        <ImageView
+            android:layout_width="780dp"
+            android:layout_height="417dp"
+            android:id="@+id/imageView2"
+            android:layout_gravity="center"
+            android:src="@mipmap/playermode"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Placeholder text"
-            android:id="@+id/feedbackText"
-            android:layout_gravity="center_horizontal|top" />
+        <Button
+            android:layout_width="185dp"
+            android:layout_height="121dp"
+            android:text="Stomper"
+            android:id="@+id/stomperbtn"
+            android:layout_gravity="left|top" />
+
+        <Button
+            android:layout_width="167dp"
+            android:layout_height="122dp"
+            android:text="Runner"
+            android:id="@+id/runnerbtn"
+            android:layout_gravity="right|top" />
+
+        <Button
+            android:layout_width="180dp"
+            android:layout_height="98dp"
+            android:text="Lock In"
+            android:id="@+id/lockinbtn"
+            android:layout_gravity="center_horizontal|bottom" />
+
     </FrameLayout>
 
 </FrameLayout>
