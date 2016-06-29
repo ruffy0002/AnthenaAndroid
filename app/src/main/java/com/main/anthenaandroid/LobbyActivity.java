@@ -116,10 +116,6 @@ public class LobbyActivity extends AppCompatActivity {
 
         findViewById(R.id.lockinbtn).setOnTouchListener(mDelayHideTouchListener);
 
-        System.out.println("Finding room");
-        rf = new RoomFinder();
-        Thread thread = new Thread(rf);
-        thread.start();
         final Button stomperBtn = (Button) findViewById(R.id.stomperbtn);
         final Button runnerBtn = (Button) findViewById(R.id.runnerbtn);
         runnerBtn.setBackgroundColor(Color.RED);
