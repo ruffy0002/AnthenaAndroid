@@ -1,6 +1,7 @@
 package com.main.anthenaandroid;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 /**
@@ -34,6 +36,7 @@ public class LobbyActivity extends AppCompatActivity {
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
+    private boolean isRunner = true;
 
     RoomFinder rf;
     private final Runnable mHidePart2Runnable = new Runnable() {
@@ -116,6 +119,41 @@ public class LobbyActivity extends AppCompatActivity {
         rf = new RoomFinder();
         Thread thread = new Thread(rf);
         thread.start();
+        final Button stomperBtn = (Button) findViewById(R.id.stomperbtn);
+        final Button runnerBtn = (Button) findViewById(R.id.runnerbtn);
+        Button lockBtn = (Button) findViewById(R.id.lockinbtn);
+
+        stomperBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isRunner = false;
+                stomperBtn.setClickable(isRunner);
+                runnerBtn.setClickable(!isRunner);
+            }
+        });
+        runnerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isRunner = true;
+                stomperBtn.setClickable(isRunner);
+                runnerBtn.setClickable(!isRunner);
+            }
+        });
+
+        lockBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i;
+                if (isRunner){
+                    i = new Intent(getApplicationContext(), runnerUI.class);
+                    startActivity(i);
+                }else{
+                    i = new Intent(getApplicationContext(), stomperUI.class);
+                    startActivity(i);
+                }
+            }
+        });
+        /*
         FrameLayout flWebPre = (FrameLayout) findViewById(R.id.Dummy);
 
         flWebPre.setOnTouchListener(new View.OnTouchListener() {
@@ -131,7 +169,7 @@ public class LobbyActivity extends AppCompatActivity {
                 sendStomp(percentX,percentY);
                 return true;
             }
-        });
+        });*/
     }
 
     @Override

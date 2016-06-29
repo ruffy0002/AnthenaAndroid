@@ -12,9 +12,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".startPageActivity"
-            android:screenOrientation="landscape"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
+            android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,10 +24,15 @@
         </activity>
         <activity
             android:name=".LobbyActivity"
-            android:screenOrientation="landscape"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen"
-            android:theme="@style/FullscreenTheme"></activity>
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
+        <activity android:name=".stomperUI" />
+        <activity
+            android:name=".runnerUI"
+            android:label="@string/title_activity_runner_ui"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
