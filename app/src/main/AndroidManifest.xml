@@ -29,10 +29,7 @@
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme" />
         <activity android:name=".stomperUI" />
-        <activity
-            android:name=".runnerUI"
-            android:label="@string/title_activity_runner_ui"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".runnerUI"></activity>
     </application>
 
 </manifest>

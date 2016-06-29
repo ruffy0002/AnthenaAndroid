@@ -2,6 +2,7 @@ package com.main.anthenaandroid;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -121,22 +122,24 @@ public class LobbyActivity extends AppCompatActivity {
         thread.start();
         final Button stomperBtn = (Button) findViewById(R.id.stomperbtn);
         final Button runnerBtn = (Button) findViewById(R.id.runnerbtn);
+        runnerBtn.setBackgroundColor(Color.RED);
+        stomperBtn.setBackgroundColor(Color.GREEN);
         Button lockBtn = (Button) findViewById(R.id.lockinbtn);
 
         stomperBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isRunner = false;
-                stomperBtn.setClickable(isRunner);
-                runnerBtn.setClickable(!isRunner);
+                stomperBtn.setBackgroundColor(Color.RED);
+                runnerBtn.setBackgroundColor(Color.GREEN);
             }
         });
         runnerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isRunner = true;
-                stomperBtn.setClickable(isRunner);
-                runnerBtn.setClickable(!isRunner);
+                stomperBtn.setBackgroundColor(Color.GREEN);
+                runnerBtn.setBackgroundColor(Color.RED);
             }
         });
 
