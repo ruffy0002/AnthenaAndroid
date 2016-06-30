@@ -15,9 +15,8 @@ public class GamePacket implements Serializable {
      *
      * @param x
      * @param y
-     * @param type which type of packet this is, GamePacket.TYPE_STOMPER, GamePacket.TYPE_RUNNER
-     *             or GamePacket.TYPE_POSITIONUPDATE etc, see the declared public static varaibles
-     *             in this class
+     * @param type which type of packet this is, GamePacket.TYPE_STOMPER or GamePacket.TYPE_RUNNER
+     *             or GamePacket.TYPE_POSITIONUPDATE
      */
     public GamePacket (float x, float y, int type) {
         this.x = x;
@@ -32,8 +31,9 @@ public class GamePacket implements Serializable {
     public static int TYPE_STOMPER = 0;
     public static int TYPE_RUNNER = 1;
     public static int TYPE_POSITIONUPDATE = 2;
-    public static int TYPE_TYPECHANGE = 3;
-    public static int TYPE_GAMEEND = 4;
+    public static int TYPE_READY = 3;
+    public static int TYPE_UNREADY = 4;
+    public static int TYPE_GAMEEND = 5;
 
     public float getX() {
         return x;

@@ -41,6 +41,8 @@ public class RoomFinder implements Runnable{
 
     boolean connected = false;
 
+    boolean ready = false;
+
     long retryTimer = 0;
     private static final int RETRY_DELAY = 2000;
     private static final int SOCKET_TIMEOUT_DURATION = 100;
@@ -249,6 +251,34 @@ public class RoomFinder implements Runnable{
     public void switchPlayerType (int type) {
         this.type = type;
         sendTypeChangePacket();
+    }
+
+    /**
+     * Toggles the ready/unready state for lobby and sends the change to the server
+     */
+    public void toggleReadyState () {
+        if(ready) {
+            //Sets the player to not ready
+            ready = false;
+            sendUnreadyPacket();
+        } else {
+            ready = true;
+            sendReadyPacket();
+        }
+    }
+
+    private void sendReadyPacket () {
+        if(isRoomFound) {
+            GamePacket newPacket = new GamePacket(0, 0, GamePacket.TYPE_READY);
+            packetQueue.add(newPacket);
+        }
+    }
+
+    private void sendUnreadyPacket () {
+        if(isRoomFound) {
+            GamePacket newPacket = new GamePacket(0, 0, GamePacket.TYPE_UNREADY);
+            packetQueue.add(newPacket);
+        }
     }
     /**
      * Intialises a TCP connection to the server found in the broadcast, or reconnects to the server
