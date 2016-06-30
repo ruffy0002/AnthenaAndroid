@@ -19,7 +19,6 @@ public class stomperUI extends Activity {
         Thread thread = new Thread(rf);
         thread.start();
         gl = new GameLoop(this,false);
-        thread.start();
         RelativeLayout stomperLayout = (RelativeLayout) findViewById(R.id.stomperLayout);
         stomperLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
