@@ -33,7 +33,8 @@ public class GamePacket implements Serializable {
     public static int TYPE_POSITIONUPDATE = 2;
     public static int TYPE_READY = 3;
     public static int TYPE_UNREADY = 4;
-    public static int TYPE_GAMEEND = 5;
+    public static int TYPE_GAMESTART = 5;
+    public static int TYPE_GAMEEND = 6;
 
     public float getX() {
         return x;

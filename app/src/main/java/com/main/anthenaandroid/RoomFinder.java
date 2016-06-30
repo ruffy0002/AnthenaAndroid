@@ -42,6 +42,7 @@ public class RoomFinder implements Runnable{
     boolean connected = false;
 
     boolean ready = false;
+    boolean isGameStarted = false;
 
     long retryTimer = 0;
     private static final int RETRY_DELAY = 2000;
@@ -84,6 +85,15 @@ public class RoomFinder implements Runnable{
             GamePacket newPacket = new GamePacket(x, y, GamePacket.TYPE_RUNNER);
             packetQueue.add(newPacket);
         }
+    }
+
+    /**
+     * Checks if the server has already sent a packet to indicate a game start after all players
+     * have readied
+     * @return true if game has started, false otherwise
+     */
+    public boolean checkGameStarted (){
+        return isGameStarted;
     }
 
     /**
@@ -202,7 +212,11 @@ public class RoomFinder implements Runnable{
      * function if the data was to be sent directly to the main activity
      */
     private void transferGameDataToProgram (GamePacket gameData) {
-        rcvedPacketQueue.add(gameData);
+        if(gameData.getType() == GamePacket.TYPE_GAMESTART) {
+            isGameStarted = true;
+        } else {
+            rcvedPacketQueue.add(gameData);
+        }
     }
 
     /**
