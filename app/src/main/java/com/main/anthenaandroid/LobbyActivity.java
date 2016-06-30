@@ -40,7 +40,7 @@ public class LobbyActivity extends Activity {
     private View mContentView;
     private boolean isRunner = true;
 
-    RoomFinder rf;
+    public static RoomFinder rf;
 
 
     @Override
@@ -50,6 +50,7 @@ public class LobbyActivity extends Activity {
         setContentView(R.layout.lobby_page);
 
         mContentView = findViewById(R.id.fullscreen_content);
+        rf = new RoomFinder(RoomFinder.TYPE_RUNNER);
 
 
 
@@ -84,12 +85,6 @@ public class LobbyActivity extends Activity {
             public void onClick(View v) {
                 Intent i;
                 if (isRunner){
-
-                    System.out.println("Finding room");
-                    rf = new RoomFinder(RoomFinder.TYPE_RUNNER);
-                    Thread thread = new Thread(rf);
-                    thread.start();
-
                     i = new Intent(getApplicationContext(), runnerUI.class);
                     startActivity(i);
                 }else{

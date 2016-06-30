@@ -10,16 +10,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class stomperUI extends Activity {
-    RoomFinder rf;
+    RoomFinder rf = LobbyActivity.rf;
     GameLoop gl;
     @Override
      protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stomper_ui);
-        System.out.println("Finding room");
-        rf = new RoomFinder(RoomFinder.TYPE_STOMPER);
         Thread thread = new Thread(rf);
-        gl = new GameLoop(this);
+        thread.start();
+        gl = new GameLoop(this,false);
         thread.start();
         RelativeLayout stomperLayout = (RelativeLayout) findViewById(R.id.stomperLayout);
         stomperLayout.setOnTouchListener(new View.OnTouchListener() {

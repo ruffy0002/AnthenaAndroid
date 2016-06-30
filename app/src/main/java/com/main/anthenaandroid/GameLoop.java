@@ -17,13 +17,17 @@ public class GameLoop extends Thread{
     int sleepTime;      // ms to sleep (<0 if we're behind)
     int framesSkipped;  // number of frames being skipped
     public StomperPlayer sp;
+    public RunnerPlayer rp;
+    boolean isRunner;
     private Activity parentActivity;
     TextView stompsLeftText;
     int prevStompNo;
 
-    public GameLoop(Activity a){
+    public GameLoop(Activity a, boolean runner){
         parentActivity = a;
+        isRunner = runner;
         sp = new StomperPlayer();
+        rp = new RunnerPlayer();
     }
     @Override
     public void run() {
@@ -62,16 +66,22 @@ public class GameLoop extends Thread{
         }
     }
     public void stateUpdate(){
-        sp.checkCoolDown();
+        if(!isRunner) {
+            sp.checkCoolDown();
+        }else{
+            rp.checkChangeDir();
+        }
     }
     public void render(){
-        parentActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                TextView tv = (TextView) parentActivity.findViewById(R.id.StompsRemaining);
-                tv.setText("Stomps Remaining: " + sp.stompsLeft);
-            }
-        });
+        if(!isRunner) {
+            parentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    TextView tv = (TextView) parentActivity.findViewById(R.id.StompsRemaining);
+                    tv.setText("Stomps Remaining: " + sp.stompsLeft);
+                }
+            });
+        }
 
     }
 }
