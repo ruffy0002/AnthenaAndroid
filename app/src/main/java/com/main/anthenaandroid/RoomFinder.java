@@ -7,15 +7,12 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -245,6 +242,15 @@ public class RoomFinder implements Runnable{
     }
 
     /**
+     * Used in lobby to switch the player's type
+     *
+     * @param type - RoomFinder.TYPE_STOMPER, RoomFinder.TYPE_RUNNER
+     */
+    public void switchPlayerType (int type) {
+        this.type = type;
+        sendTypeChangePacket();
+    }
+    /**
      * Intialises a TCP connection to the server found in the broadcast, or reconnects to the server
      * via TCP
      */
@@ -257,7 +263,7 @@ public class RoomFinder implements Runnable{
                 socket.setSoTimeout(SOCKET_TIMEOUT_DURATION);
                 connected = true;
                 //Initialisation packet to let server know what kind of player this is
-                sendInitialisationPacket();
+                sendTypeChangePacket();
                 System.out.println("Connected to server");
             } catch (UnknownHostException e) {
                 System.out.println("Connection failed, retrying in " + RETRY_DELAY + " seconds");
@@ -273,7 +279,7 @@ public class RoomFinder implements Runnable{
      * Sends a packet to let the server know what kind of player this is. Uses -1000,-1000 as a
      * reserved value for x,y for initialisation
      */
-    private void sendInitialisationPacket() {
+    private void sendTypeChangePacket() {
         if(type == GamePacket.TYPE_STOMPER) {
             sendStomp(-1000,-1000);
         } else if(type == GamePacket.TYPE_RUNNER) {

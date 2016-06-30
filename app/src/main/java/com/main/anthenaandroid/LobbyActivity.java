@@ -66,6 +66,7 @@ public class LobbyActivity extends Activity {
                 isRunner = false;
                 stomperBtn.setBackgroundColor(Color.GRAY);
                 runnerBtn.setBackgroundColor(Color.LTGRAY);
+                rf.switchPlayerType(RoomFinder.TYPE_STOMPER);
             }
         });
         runnerBtn.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +75,7 @@ public class LobbyActivity extends Activity {
                 isRunner = true;
                 stomperBtn.setBackgroundColor(Color.LTGRAY);
                 runnerBtn.setBackgroundColor(Color.GRAY);
+                rf.switchPlayerType(RoomFinder.TYPE_RUNNER);
             }
         });
 
