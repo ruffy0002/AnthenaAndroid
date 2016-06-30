@@ -87,13 +87,10 @@ public class LobbyActivity extends Activity {
                     rf = new RoomFinder(RoomFinder.TYPE_RUNNER);
                     Thread thread = new Thread(rf);
                     thread.start();
+
                     i = new Intent(getApplicationContext(), runnerUI.class);
                     startActivity(i);
                 }else{
-                    System.out.println("Finding room");
-                    rf = new RoomFinder(RoomFinder.TYPE_STOMPER);
-                    Thread thread = new Thread(rf);
-                    thread.start();
 
                     i = new Intent(getApplicationContext(), stomperUI.class);
                     startActivity(i);
@@ -125,9 +122,5 @@ public class LobbyActivity extends Activity {
 
 
 
-    public void sendStomp (float x, float y){
-        if (rf != null) {
-            rf.sendStomp(x,y);
-        }
-    }
+
 }
