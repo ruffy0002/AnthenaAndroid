@@ -87,10 +87,8 @@ public class LobbyActivity extends Activity {
                     rf = new RoomFinder(RoomFinder.TYPE_RUNNER);
                     Thread thread = new Thread(rf);
                     thread.start();
-                    /*
                     i = new Intent(getApplicationContext(), runnerUI.class);
                     startActivity(i);
-                    */
                 }else{
                     System.out.println("Finding room");
                     rf = new RoomFinder(RoomFinder.TYPE_STOMPER);
