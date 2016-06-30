@@ -37,30 +37,22 @@
             android:orientation="horizontal"
             tools:ignore="UselessParent">
 
-            <Button
-                android:id="@+id/dummy_button"
-                style="?metaButtonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dummy_button" />
-
         </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Check for data"
-            android:id="@+id/data_button"
-            android:layout_gravity="center" />
+        <ImageView
+            android:layout_width="682dp"
+            android:layout_height="403dp"
+            android:id="@+id/imageView"
+            android:layout_gravity="center"
+            android:src="@mipmap/startpage"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Placeholder text"
-            android:id="@+id/feedbackText"
-            android:layout_gravity="center_horizontal|top" />
+        <Button
+            android:layout_width="130dp"
+            android:layout_height="70dp"
+            android:text="Join Game"
+            android:id="@+id/startBtn"
+            android:layout_gravity="center_horizontal|bottom" />
+
     </FrameLayout>
 
 </FrameLayout>
