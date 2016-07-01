@@ -16,10 +16,10 @@ public class stomperUI extends Activity {
      protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stomper_ui);
-        Thread thread = new Thread(rf);
-        thread.start();
         gl = new GameLoop(this,false);
         RelativeLayout stomperLayout = (RelativeLayout) findViewById(R.id.stomperLayout);
+
+        rf.sendGameStartedPacket();
         stomperLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

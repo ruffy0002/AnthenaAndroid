@@ -16,10 +16,9 @@ public class runnerUI extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_runner_ui);
-        Thread thread = new Thread(rf);
-        thread.start();
         gl = new GameLoop(this,true);
 
+        rf.sendGameStartedPacket();
         RelativeLayout runnerF = (RelativeLayout) findViewById(R.id.runnerField);
         runnerF.setOnTouchListener(new View.OnTouchListener() {
             @Override

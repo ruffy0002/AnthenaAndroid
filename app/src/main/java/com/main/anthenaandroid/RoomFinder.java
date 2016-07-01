@@ -22,6 +22,7 @@ import java.util.Queue;
  * Created by ruffy0002_2 on 27/5/2016.
  */
 public class RoomFinder implements Runnable{
+
     DatagramSocket c;
     int portNo = 1355;
     int dataPortNo = 1356;
@@ -95,6 +96,8 @@ public class RoomFinder implements Runnable{
     public boolean checkGameStarted (){
         return isGameStarted;
     }
+
+    public boolean checkRoomFound () { return isRoomFound;}
 
     /**
      * Broadcasts and establishes a TCP connection to an anthena server, then starts an infinite
@@ -190,6 +193,9 @@ public class RoomFinder implements Runnable{
         }
     }
 
+    public boolean checkReadyState(){
+        return ready;
+    }
     /**
      * Gets data from the TCP socket until sockettimeout occurs
      */
@@ -284,6 +290,13 @@ public class RoomFinder implements Runnable{
     private void sendReadyPacket () {
         if(isRoomFound) {
             GamePacket newPacket = new GamePacket(0, 0, GamePacket.TYPE_READY);
+            packetQueue.add(newPacket);
+        }
+    }
+
+    public void sendGameStartedPacket () {
+        if(isRoomFound) {
+            GamePacket newPacket = new GamePacket(0, 0, GamePacket.TYPE_GAMESTART);
             packetQueue.add(newPacket);
         }
     }

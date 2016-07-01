@@ -40,8 +40,29 @@ public class LobbyActivity extends Activity {
     private View mContentView;
     private boolean isRunner = true;
 
-    public static RoomFinder rf;
+    public static RoomFinder rf = startPageActivity.rf;
 
+    private void awaitGameStart() {
+        Thread t = new Thread() {
+            public void run() {
+                while(true){
+                    if(rf.checkGameStarted()) {
+                        break;
+                    }
+                }
+                Intent i;
+                if (isRunner){
+                    i = new Intent(getApplicationContext(), runnerUI.class);
+                    startActivity(i);
+                }else{
+
+                    i = new Intent(getApplicationContext(), stomperUI.class);
+                    startActivity(i);
+                }
+            }
+        };
+        t.start();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +71,6 @@ public class LobbyActivity extends Activity {
         setContentView(R.layout.lobby_page);
 
         mContentView = findViewById(R.id.fullscreen_content);
-        rf = new RoomFinder(RoomFinder.TYPE_RUNNER);
-
-
-
 
         final Button stomperBtn = (Button) findViewById(R.id.stomperbtn);
         final Button runnerBtn = (Button) findViewById(R.id.runnerbtn);
@@ -83,17 +100,14 @@ public class LobbyActivity extends Activity {
         lockBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i;
-                if (isRunner){
-                    i = new Intent(getApplicationContext(), runnerUI.class);
-                    startActivity(i);
-                }else{
-
-                    i = new Intent(getApplicationContext(), stomperUI.class);
-                    startActivity(i);
-
+                rf.toggleReadyState();
+                if(rf.checkReadyState()) {
+                    lockBtn.setBackgroundColor(Color.GRAY);
+                    awaitGameStart();
+                } else {
+                    lockBtn.setBackgroundColor(Color.WHITE);
                 }
-                lockBtn.setBackgroundColor(Color.GRAY);
+
             }
         });
         /*

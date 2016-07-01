@@ -17,7 +17,7 @@ public class startPageActivity extends Activity {
     EditText textOut;
     TextView textIn;
 
-    RoomFinder rf;
+    public static RoomFinder rf;
 
     /** Called when the activity is first created. */
     @Override
@@ -26,6 +26,7 @@ public class startPageActivity extends Activity {
         setContentView(R.layout.start_page);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         textOut = (EditText)findViewById(R.id.textout);
+        rf = new RoomFinder(RoomFinder.TYPE_RUNNER);
         /*
         Button buttonSend = (Button)findViewById(R.id.dummy_button);
         //Button buttonData = (Button)findViewById(R.id.data_button);
@@ -37,6 +38,8 @@ public class startPageActivity extends Activity {
         joinGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Thread thread = new Thread(rf);
+                thread.start();
                 Intent nextIntent = new Intent(getApplicationContext(), LobbyActivity.class);
                 startActivity(nextIntent);
             }
