@@ -19,6 +19,7 @@ public class runnerUI extends Activity {
         Thread thread = new Thread(rf);
         thread.start();
         gl = new GameLoop(this,true);
+
         RelativeLayout runnerF = (RelativeLayout) findViewById(R.id.runnerField);
         runnerF.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -31,7 +32,8 @@ public class runnerUI extends Activity {
                 return true;
             }
         });
-
+        Thread gameLoop = new Thread(gl);
+        gameLoop.start();
         /**
         final TextView joystickCoords = (TextView) findViewById(R.id.joystickcoords);
         final View joystick = (View) findViewById(R.id.Stick);

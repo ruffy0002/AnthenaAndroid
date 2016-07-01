@@ -72,13 +72,21 @@ public class GameLoop extends Thread{
             rp.checkChangeDir();
         }
     }
-    public void render(){
-        if(!isRunner) {
+    public void render() {
+        if (!isRunner) {
             parentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     TextView tv = (TextView) parentActivity.findViewById(R.id.StompsRemaining);
                     tv.setText("Stomps Remaining: " + sp.stompsLeft);
+                }
+            });
+        } else{
+            parentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    TextView tv = (TextView) parentActivity.findViewById(R.id.joystickcoords);
+                    tv.setText("Stomps Remaining: " + rp.changeDirStart);
                 }
             });
         }

@@ -13,7 +13,7 @@ public class RunnerPlayer {
     }
     public boolean canChangeDir(){
         long curr = System.currentTimeMillis();
-        if(changeDirStart<0) {
+        if(changeDirStart==-1) {
             changeDirStart = curr;
             return true;
         }
@@ -24,7 +24,7 @@ public class RunnerPlayer {
 
     public void checkChangeDir() {
         long curr = System.currentTimeMillis();
-        if (changeDirStart> -1) {
+        if (changeDirStart >= 0) {
             if(curr >= changeDirStart+changeDirTime){
                 changeDirStart = -1;
             }
