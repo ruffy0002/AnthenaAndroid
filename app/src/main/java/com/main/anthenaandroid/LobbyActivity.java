@@ -3,6 +3,7 @@ package com.main.anthenaandroid;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -69,6 +70,7 @@ public class LobbyActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.lobby_page);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         mContentView = findViewById(R.id.fullscreen_content);
 
