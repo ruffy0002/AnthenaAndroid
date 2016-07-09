@@ -42,27 +42,36 @@ public class LobbyActivity extends Activity {
     private boolean isRunner = true;
 
     public static RoomFinder rf = startPageActivity.rf;
+    private Thread loadIntoGame;
 
     private void awaitGameStart() {
-        Thread t = new Thread() {
+        loadIntoGame = new Thread() {
+            private boolean changeActivity = true;
             public void run() {
                 while(true){
                     if(rf.checkGameStarted()) {
                         break;
                     }
+                    if(Thread.currentThread().isInterrupted()) {
+                        System.out.println("Successfully unreadied");
+                        changeActivity = false;
+                        break;
+                    }
                 }
-                Intent i;
-                if (isRunner){
-                    i = new Intent(getApplicationContext(), runnerUI.class);
-                    startActivity(i);
-                }else{
+                if(changeActivity) {
+                    Intent i;
+                    if (isRunner) {
+                        i = new Intent(getApplicationContext(), runnerUI.class);
+                        startActivity(i);
+                    } else {
 
-                    i = new Intent(getApplicationContext(), stomperUI.class);
-                    startActivity(i);
+                        i = new Intent(getApplicationContext(), stomperUI.class);
+                        startActivity(i);
+                    }
                 }
             }
         };
-        t.start();
+        loadIntoGame.start();
     }
 
     @Override
@@ -105,9 +114,14 @@ public class LobbyActivity extends Activity {
                 rf.toggleReadyState();
                 if(rf.checkReadyState()) {
                     lockBtn.setBackgroundColor(Color.GRAY);
+                    runnerBtn.setClickable(false);
+                    stomperBtn.setClickable(false);
                     awaitGameStart();
                 } else {
-                    lockBtn.setBackgroundColor(Color.WHITE);
+                    runnerBtn.setClickable(true);
+                    stomperBtn.setClickable(true);
+                    lockBtn.setBackgroundColor(Color.LTGRAY);
+                    loadIntoGame.interrupt();
                 }
 
             }

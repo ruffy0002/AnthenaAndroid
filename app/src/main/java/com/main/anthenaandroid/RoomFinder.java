@@ -296,6 +296,7 @@ public class RoomFinder implements Runnable{
 
     public void sendGameStartedPacket () {
         if(isRoomFound) {
+            System.out.println("Sent I am loaded packet");
             GamePacket newPacket = new GamePacket(0, 0, GamePacket.TYPE_GAMESTART);
             packetQueue.add(newPacket);
         }
