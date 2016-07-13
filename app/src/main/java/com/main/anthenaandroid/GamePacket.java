@@ -35,8 +35,18 @@ public class GamePacket implements Serializable {
     public static int TYPE_UNREADY = 4;
     public static int TYPE_GAMESTART = 5;
     public static int TYPE_GAMEEND = 6;
-
     public static int TYPE_CHANGEPLAYERTYPE = 7;
+    public static int TYPE_SKILL = 8;
+
+    public static int SKILL_SETTRAP = 1;
+
+    public int getSkill () {
+        return (int) x;
+    }
+
+    public void setSkill (int skill) {
+        x = (float) skill;
+    }
 
     public float getX() {
         return x;

@@ -22,12 +22,14 @@ public class GameLoop extends Thread{
     private Activity parentActivity;
     TextView stompsLeftText;
     int prevStompNo;
+    RoomFinder rf;
 
-    public GameLoop(Activity a, boolean runner){
+    public GameLoop(Activity a, boolean runner, RoomFinder _rf){
         parentActivity = a;
         isRunner = runner;
         sp = new StomperPlayer();
         rp = new RunnerPlayer();
+        rf = _rf;
     }
     @Override
     public void run() {
@@ -79,6 +81,8 @@ public class GameLoop extends Thread{
                 public void run() {
                     TextView tv = (TextView) parentActivity.findViewById(R.id.StompsRemaining);
                     tv.setText("Stomps Remaining: " + sp.stompsLeft);
+                    TextView tv2 = (TextView) parentActivity.findViewById(R.id.stomperFeedback);
+                    tv.setText("Packets Sent: " + rf.getPacketsSent());
                 }
             });
         } else{
@@ -87,6 +91,8 @@ public class GameLoop extends Thread{
                 public void run() {
                     TextView tv = (TextView) parentActivity.findViewById(R.id.joystickcoords);
                     tv.setText("Stomps Remaining: " + rp.changeDirStart);
+                    TextView tv2 = (TextView) parentActivity.findViewById(R.id.runnerFeedback);
+                    tv.setText("Packets Sent: "+ rf.getPacketsSent());
                 }
             });
         }

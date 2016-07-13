@@ -53,6 +53,8 @@ public class RoomFinder implements Runnable{
     public static final int TYPE_RUNNER = 1;
     public int type = TYPE_STOMPER;
 
+    private int packetsSent = 0;
+
     /**
      * Default type would be stomper
      * @param type - RoomFinder.TYPE_STOMPER, RoomFinder.TYPE_RUNNER
@@ -64,6 +66,14 @@ public class RoomFinder implements Runnable{
         this.type = RoomFinder.TYPE_STOMPER;
     }
 
+    public void sendSkill (int skill) {
+        if(isRoomFound) {
+            GamePacket newPacket = new GamePacket(-1, -1, GamePacket.TYPE_SKILL);
+            newPacket.setSkill(skill);
+            packetQueue.add(newPacket);
+        }
+    }
+
     /**
      * Sends a stomp at the coordinates specified towards the server at the next loop
      * @param x
@@ -71,6 +81,9 @@ public class RoomFinder implements Runnable{
      */
     public void sendStomp (float x, float y) {
         if(isRoomFound) {
+            if(x != -1000) {
+                packetsSent++;
+            }
             GamePacket newPacket = new GamePacket(x, y, GamePacket.TYPE_STOMPER);
             packetQueue.add(newPacket);
         }
@@ -83,9 +96,21 @@ public class RoomFinder implements Runnable{
      */
     public void sendMovement (float x, float y) {
         if(isRoomFound) {
+            if(x != -1000) {
+                packetsSent++;
+            }
             GamePacket newPacket = new GamePacket(x, y, GamePacket.TYPE_RUNNER);
             packetQueue.add(newPacket);
         }
+    }
+
+    /**
+     * Gets how many game packets were sent out
+     *
+     * @return number of game packets sent
+     */
+    public int getPacketsSent () {
+        return packetsSent;
     }
 
     /**

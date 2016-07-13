@@ -10,6 +10,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".startPageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -28,7 +29,8 @@
             android:label="@string/title_activity_fullscreen"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".stomperUI" />
+        <activity
+            android:name=".stomperUI"/>
         <activity android:name=".runnerUI"></activity>
     </application>
 
