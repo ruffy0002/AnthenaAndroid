@@ -82,7 +82,7 @@ public class GameLoop extends Thread{
                     TextView tv = (TextView) parentActivity.findViewById(R.id.StompsRemaining);
                     tv.setText("Stomps Remaining: " + sp.stompsLeft);
                     TextView tv2 = (TextView) parentActivity.findViewById(R.id.stomperFeedback);
-                    tv.setText("Packets Sent: " + rf.getPacketsSent());
+                    tv2.setText("Packets Sent: " + rf.getPacketsSent());
                 }
             });
         } else{
@@ -92,7 +92,7 @@ public class GameLoop extends Thread{
                     TextView tv = (TextView) parentActivity.findViewById(R.id.joystickcoords);
                     tv.setText("Stomps Remaining: " + rp.changeDirStart);
                     TextView tv2 = (TextView) parentActivity.findViewById(R.id.runnerFeedback);
-                    tv.setText("Packets Sent: "+ rf.getPacketsSent());
+                    tv2.setText("Packets Sent: "+ rf.getPacketsSent());
                 }
             });
         }

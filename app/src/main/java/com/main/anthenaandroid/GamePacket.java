@@ -39,6 +39,7 @@ public class GamePacket implements Serializable {
     public static int TYPE_SKILL = 8;
 
     public static int SKILL_SETTRAP = 1;
+    public static int SKILL_KAKEBUSHIN = 2;
 
     public int getSkill () {
         return (int) x;
