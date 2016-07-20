@@ -1,6 +1,7 @@
 package com.main.anthenaandroid;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -75,6 +76,25 @@ public class GameLoop extends Thread{
             sp.checkCoolDown();
         }else{
             rp.checkChangeDir();
+        }
+        checkServerData();
+    }
+
+    /**
+     * Checks for game response to server sent packets
+     */
+    private void checkServerData() {
+        if(rf.hasDataFromServer()) {
+            GamePacket gp = rf.getDataFromServer();
+            if(gp.getType() == GamePacket.TYPE_CHANGEPLAYERTYPE && isRunner) {
+                parentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent i = new Intent(parentActivity.getApplicationContext(), runnerUI.class);
+                        parentActivity.startActivity(i);
+                    }
+                });
+            }
         }
     }
 
