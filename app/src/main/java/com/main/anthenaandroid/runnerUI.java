@@ -35,10 +35,11 @@ public class runnerUI extends Activity {
 
         final Button skillBtn2 = (Button) findViewById(R.id.skillBtn2);
 
-        skillBtn.setOnClickListener(new View.OnClickListener() {
+        skillBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 rf.sendSkill(GamePacket.SKILL_KAKEBUSHIN);
+                gl.displayTrappedText(5000, "by Ruffy");
             }
         });
 

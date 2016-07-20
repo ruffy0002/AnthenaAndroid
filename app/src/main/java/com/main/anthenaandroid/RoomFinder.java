@@ -32,7 +32,8 @@ public class RoomFinder implements Runnable{
     boolean isRoomFound = false;
 
     Queue<GamePacket> packetQueue = new LinkedList<GamePacket>();
-    Queue<GamePacket> rcvedPacketQueue = new LinkedList<GamePacket>();
+    Queue<GamePacket> rcvedGameDataPacketQueue = new LinkedList<GamePacket>();
+    Queue<GameMessagePacket> rcvedGameMessagePacketQueue = new LinkedList<GameMessagePacket>();
     private InetAddress _ipToSend;
     private int _portNo;
 
@@ -228,8 +229,8 @@ public class RoomFinder implements Runnable{
         Object tmp;
         try {
             tmp = dataInputStream.readObject();
-            if(tmp instanceof GamePacket) {
-                transferGameDataToProgram((GamePacket) tmp);
+            if(tmp instanceof GamePacket || tmp instanceof GameMessagePacket) {
+                transferGameDataToProgram(tmp);
             }
         } catch (IOException e) {
 
@@ -242,11 +243,16 @@ public class RoomFinder implements Runnable{
      * Sends the recieved data into a queue to be retrieved from the main program. Edit in this
      * function if the data was to be sent directly to the main activity
      */
-    private void transferGameDataToProgram (GamePacket gameData) {
-        if(gameData.getType() == GamePacket.TYPE_GAMESTART) {
-            isGameStarted = true;
-        } else {
-            rcvedPacketQueue.add(gameData);
+    private void transferGameDataToProgram (Object packetData) {
+        if(packetData instanceof GamePacket){
+            GamePacket gameData = (GamePacket) packetData;
+            if (gameData.getType() == GamePacket.TYPE_GAMESTART) {
+                isGameStarted = true;
+            } else {
+                rcvedGameDataPacketQueue.add(gameData);
+            }
+        } else if (packetData instanceof GameMessagePacket) {
+            rcvedGameMessagePacketQueue.add((GameMessagePacket) packetData);
         }
     }
 
@@ -256,7 +262,20 @@ public class RoomFinder implements Runnable{
      * @return true if there is data, false otherwise
      */
     public boolean hasDataFromServer () {
-        if(rcvedPacketQueue.size() > 0) {
+        if(rcvedGameDataPacketQueue.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if there is a message sent from the server
+     *
+     * @return true if there is data, false otherwise
+     */
+    public boolean hasMessageDataFromServer () {
+        if(rcvedGameMessagePacketQueue.size() > 0) {
             return true;
         } else {
             return false;
@@ -270,8 +289,19 @@ public class RoomFinder implements Runnable{
      * @return
      */
     public GamePacket getDataFromServer () {
-        return rcvedPacketQueue.poll();
+        return rcvedGameDataPacketQueue.poll();
     }
+
+    /**
+     * Gets GameMessagePacket data that is sent from the server, use hasMessageDataFromServer prior to this to
+     * check if there is data to be retrieved
+     *
+     * @return
+     */
+    public GameMessagePacket getMessageDataFromServer () {
+        return rcvedGameMessagePacketQueue.poll();
+    }
+
 
     /*
         Sends the queued data to the server at each cycle

@@ -1,6 +1,7 @@
 package com.main.anthenaandroid;
 
 import android.app.Activity;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -23,6 +24,8 @@ public class GameLoop extends Thread{
     TextView stompsLeftText;
     int prevStompNo;
     RoomFinder rf;
+
+    long messageDurationLeft = 0;
 
     public GameLoop(Activity a, boolean runner, RoomFinder _rf){
         parentActivity = a;
@@ -74,6 +77,51 @@ public class GameLoop extends Thread{
             rp.checkChangeDir();
         }
     }
+
+    private void clearMessages() {
+        if(messageDurationLeft != 0) {
+            if(System.currentTimeMillis() > messageDurationLeft) {
+                System.out.println("Clearing trapped message");
+                clearTrappedMessage();
+                messageDurationLeft = 0;
+            }
+        }
+    }
+
+    public void clearTrappedMessage() {
+        ImageView trappedText = (ImageView) parentActivity.findViewById(R.id.trappedText);
+        trappedText.setVisibility(ImageView.INVISIBLE);
+
+        TextView trappedTextName = (TextView) parentActivity.findViewById(R.id.trappedTextName);
+        trappedTextName.setVisibility(ImageView.INVISIBLE);
+    }
+
+    private void updateServerMessages() {
+        if(rf.hasMessageDataFromServer()) {
+            GameMessagePacket gmp = rf.getMessageDataFromServer();
+            if(gmp.getType() == GameMessagePacket.MESSAGETYPE_TRAPPED) {
+                displayTrappedText(gmp.getDuration(), gmp.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Makes the TRAPPED word appear in the middle of the runner UI and append the message passed
+     * in below the TRAPPED word
+     *
+     * @param duration in ms
+     * @param message
+     */
+    public void displayTrappedText (int duration, String message) {
+        ImageView trappedText = (ImageView) parentActivity.findViewById(R.id.trappedText);
+        trappedText.setVisibility(ImageView.VISIBLE);
+        messageDurationLeft = duration + System.currentTimeMillis();
+
+        TextView trappedTextName = (TextView) parentActivity.findViewById(R.id.trappedTextName);
+        trappedTextName.setVisibility(ImageView.VISIBLE);
+        trappedTextName.setText(message);
+    }
+
     public void render() {
         if (!isRunner) {
             parentActivity.runOnUiThread(new Runnable() {
@@ -88,11 +136,13 @@ public class GameLoop extends Thread{
         } else{
             parentActivity.runOnUiThread(new Runnable() {
                 @Override
-                public void run() {
+                public  void run() {
                     TextView tv = (TextView) parentActivity.findViewById(R.id.joystickcoords);
                     tv.setText("Stomps Remaining: " + rp.changeDirStart);
                     TextView tv2 = (TextView) parentActivity.findViewById(R.id.runnerFeedback);
                     tv2.setText("Packets Sent: "+ rf.getPacketsSent());
+                    updateServerMessages();
+                    clearMessages();
                 }
             });
         }

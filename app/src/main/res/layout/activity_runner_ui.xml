@@ -63,4 +63,24 @@
         android:layout_toLeftOf="@+id/skillBtn"
         android:layout_toStartOf="@+id/skillBtn" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/trappedText"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/trapped"
+        android:visibility="invisible" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/trappedTextName"
+        android:text="by NAME_HERE"
+        android:visibility="invisible"
+        android:textAlignment="center"
+        android:layout_below="@+id/trappedText"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
