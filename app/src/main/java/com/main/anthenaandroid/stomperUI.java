@@ -29,13 +29,13 @@ public class stomperUI extends Activity {
         stomperLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX()/v.getWidth();
-                float y = event.getY()/v.getHeight();
-                if(gl.sp.canStomp()) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    float x = event.getX() / v.getWidth();
+                    float y = event.getY() / v.getHeight();
                     sendStomp(x, y);
+                    return true;
                 }
-
-                return true;
+                return false;
             }
         });
         Thread gameLoop = new Thread(gl);

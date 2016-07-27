@@ -101,7 +101,6 @@ public class GameLoop extends Thread{
     private void clearMessages() {
         if(messageDurationLeft != 0) {
             if(System.currentTimeMillis() > messageDurationLeft) {
-                System.out.println("Clearing trapped message");
                 clearTrappedMessage();
                 messageDurationLeft = 0;
             }

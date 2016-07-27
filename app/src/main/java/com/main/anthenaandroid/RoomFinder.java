@@ -214,7 +214,7 @@ public class RoomFinder implements Runnable{
                 rcvData();
                 sendData();
             } else {
-                startTCPStream();
+                retryStartingTCPStream();
             }
         }
     }
@@ -363,28 +363,35 @@ public class RoomFinder implements Runnable{
             packetQueue.add(newPacket);
         }
     }
+
+    /**
+     * Only retries starting the TCP stream after retry timer has expired
+     */
+    public void retryStartingTCPStream () {
+        if(System.currentTimeMillis() > retryTimer) {
+            startTCPStream();
+        }
+    }
     /**
      * Intialises a TCP connection to the server found in the broadcast, or reconnects to the server
      * via TCP
      */
     public void startTCPStream () {
-        if(System.currentTimeMillis() > retryTimer) {
-            try {
-                socket = new Socket(_ipToSend, _portNo);
-                dataOutputStream = new ObjectOutputStream(socket.getOutputStream());
-                dataInputStream = new ObjectInputStream(socket.getInputStream());
-                socket.setSoTimeout(SOCKET_TIMEOUT_DURATION);
-                connected = true;
-                //Initialisation packet to let server know what kind of player this is
-                sendTypeChangePacket();
-                System.out.println("Connected to server");
-            } catch (UnknownHostException e) {
-                System.out.println("Connection failed, retrying in " + RETRY_DELAY + " seconds");
-                retryTimer = System.currentTimeMillis() + RETRY_DELAY;
-            } catch (IOException e) {
-                System.out.println("Connection failed, retrying in " + RETRY_DELAY + " seconds");
-                retryTimer = System.currentTimeMillis() + RETRY_DELAY;
-            }
+        try {
+            socket = new Socket(_ipToSend, _portNo);
+            dataOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            dataInputStream = new ObjectInputStream(socket.getInputStream());
+            socket.setSoTimeout(SOCKET_TIMEOUT_DURATION);
+            connected = true;
+            //Initialisation packet to let server know what kind of player this is
+            sendTypeChangePacket();
+            System.out.println("Connected to server");
+        } catch (UnknownHostException e) {
+            System.out.println("Connection failed, retrying in " + RETRY_DELAY + " seconds");
+            retryTimer = System.currentTimeMillis() + RETRY_DELAY;
+        } catch (IOException e) {
+            System.out.println("Connection failed, retrying in " + RETRY_DELAY + " seconds");
+            retryTimer = System.currentTimeMillis() + RETRY_DELAY;
         }
     }
 

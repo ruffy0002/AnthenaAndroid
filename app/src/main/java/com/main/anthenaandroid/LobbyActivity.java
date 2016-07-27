@@ -126,6 +126,7 @@ public class LobbyActivity extends Activity {
 
             }
         });
+
         /*
         FrameLayout flWebPre = (FrameLayout) findViewById(R.id.Dummy);
 
@@ -143,11 +144,15 @@ public class LobbyActivity extends Activity {
                 return true;
             }
         });*/
+
+
     }
 
-
-
-
-
-
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(loadIntoGame != null){
+            loadIntoGame.interrupt();
+        }
+    }
 }

@@ -48,15 +48,16 @@ public class runnerUI extends Activity {
         runnerF.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX()/v.getWidth();
-                float y = event.getY()/v.getHeight();
-                if(y < NON_PLAYABLE_AREA) {
-                    y = NON_PLAYABLE_AREA;
-                }
-                if(gl.rp.canChangeDir()) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    float x = event.getX() / v.getWidth();
+                    float y = event.getY() / v.getHeight();
+                    if (y < NON_PLAYABLE_AREA) {
+                        y = NON_PLAYABLE_AREA;
+                    }
                     sendDir(x, y);
+                    return true;
                 }
-                return true;
+                return false;
             }
         });
         Thread gameLoop = new Thread(gl);
