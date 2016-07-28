@@ -45,6 +45,7 @@ public class RoomFinder implements Runnable{
 
     boolean ready = false;
     boolean isGameStarted = false;
+    boolean forceStartGame = false;
 
     long retryTimer = 0;
     private static final int RETRY_DELAY = 2000;
@@ -52,19 +53,20 @@ public class RoomFinder implements Runnable{
 
     public static final int TYPE_STOMPER = 0;
     public static final int TYPE_RUNNER = 1;
-    public int type = TYPE_STOMPER;
+    public int type = TYPE_RUNNER;
 
     private int packetsSent = 0;
 
+    private Thread broadcastReply;
     /**
-     * Default type would be stomper
+     * Default type would be runner
      * @param type - RoomFinder.TYPE_STOMPER, RoomFinder.TYPE_RUNNER
      */
     public RoomFinder (int type) {
         this.type = type;
     }
     public RoomFinder () {
-        this.type = RoomFinder.TYPE_STOMPER;
+        this.type = RoomFinder.TYPE_RUNNER;
     }
 
     public void sendSkill (int skill) {
@@ -123,15 +125,25 @@ public class RoomFinder implements Runnable{
         return isGameStarted;
     }
 
+    /**
+     * Checks for a one-time force game start, after calling this function, it will reset the
+     * boolean to false and will only be true again when another TYPE_GAMEALREADYSTARTED packet
+     * is recieved from the server
+     *
+     * @return true if should force a game start, false otherwise
+     */
+    public boolean checkToForceGameStart (){
+        if(forceStartGame) {
+            forceStartGame = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public boolean checkRoomFound () { return isRoomFound;}
 
-    /**
-     * Broadcasts and establishes a TCP connection to an anthena server, then starts an infinite
-     * loop of getting and sending data to the server every socket timeout. Sends 1 packet everytime
-     * the socket times out
-     */
-    public void run (){
-        // Find the server using UDP broadcast
+    public void sendBroadcastToLocalNetwork () {
         try {
             //Open a random port to send the package
             c = new DatagramSocket();
@@ -178,37 +190,29 @@ public class RoomFinder implements Runnable{
                 }
             }
             System.out.println("Done looping over all network interfaces. Now waiting for a reply!");
-            //Wait for a response
-            byte[] recvBuf = new byte[15000];
-            DatagramPacket receivePacket = new DatagramPacket(recvBuf, recvBuf.length);
-            c.receive(receivePacket);
-
-            //We have a response
-            System.out.println("Broadcast response from server: " + receivePacket.getAddress().getHostAddress());
-
-            //Check if the message is correct
-            ByteArrayInputStream byteStream = new ByteArrayInputStream(recvBuf);
-            ObjectInputStream is = new ObjectInputStream(new BufferedInputStream(byteStream));
-            Object replyObject = is.readObject();
-            if (replyObject instanceof BroadcastPacket) {
-                BroadcastPacket serverReply = (BroadcastPacket) replyObject;
-                if(serverReply.isServer()) {
-                    System.out.println("Found a server at " + receivePacket.getAddress());
-                    isRoomFound = true;
-                    _ipToSend = receivePacket.getAddress();
-                    _portNo = dataPortNo;
-
-                }
-            }
-            //Close the port!
-            c.close();
-        } catch (IOException ex) {
-
-        } catch (ClassNotFoundException ex) {
+        } catch (IOException e) {
 
         }
+    }
 
-        startTCPStream();
+    /**
+     * Broadcasts and establishes a TCP connection to an anthena server, then starts an infinite
+     * loop of getting and sending data to the server every socket timeout. Sends 1 packet everytime
+     * the socket times out
+     */
+    public void run (){
+        // Find the server using UDP broadcast
+        sendBroadcastToLocalNetwork();
+        waitForBroadcastReply();
+
+        while(!isRoomFound && running) {
+            //blocker till room is found, exits if running is set to false
+        }
+
+        if(running) {
+            startTCPStream();
+        }
+
         while(running) {
             if(connected) {
                 rcvData();
@@ -217,6 +221,44 @@ public class RoomFinder implements Runnable{
                 retryStartingTCPStream();
             }
         }
+    }
+
+    public void waitForBroadcastReply() {
+        broadcastReply = new Thread() {
+
+            public void run() {
+                try {
+                    //Wait for a response
+                    byte[] recvBuf = new byte[15000];
+                    DatagramPacket receivePacket = new DatagramPacket(recvBuf, recvBuf.length);
+                    c.receive(receivePacket);
+
+                    //We have a response
+                    System.out.println("Broadcast response from server: " + receivePacket.getAddress().getHostAddress());
+
+                    //Check if the message is correct
+                    ByteArrayInputStream byteStream = new ByteArrayInputStream(recvBuf);
+                    ObjectInputStream is = new ObjectInputStream(new BufferedInputStream(byteStream));
+                    Object replyObject = is.readObject();
+                    if (replyObject instanceof BroadcastPacket) {
+                        BroadcastPacket serverReply = (BroadcastPacket) replyObject;
+                        if (serverReply.isServer()) {
+                            System.out.println("Found a server at " + receivePacket.getAddress());
+                            _ipToSend = receivePacket.getAddress();
+                            _portNo = dataPortNo;
+                            isRoomFound = true;
+                        }
+                    }
+                    //Close the port!
+                    c.close();
+                } catch (IOException ex) {
+
+                } catch (ClassNotFoundException ex) {
+
+                }
+            }
+        };
+        broadcastReply.start();
     }
 
     public boolean checkReadyState(){
@@ -248,6 +290,10 @@ public class RoomFinder implements Runnable{
             GamePacket gameData = (GamePacket) packetData;
             if (gameData.getType() == GamePacket.TYPE_GAMESTART) {
                 isGameStarted = true;
+            } else if (gameData.getType() == GamePacket.TYPE_GAMEALREADYSTARTED) {
+                forceStartGame = true;
+                type = gameData.getSkill();
+                System.out.print("Recieved a force start packet");
             } else {
                 rcvedGameDataPacketQueue.add(gameData);
             }
@@ -342,6 +388,15 @@ public class RoomFinder implements Runnable{
         }
     }
 
+    /**
+     * Queues an unready state for the lobby and sends it to the server upon connecting
+     */
+    public void sendUnreadyUponReconnect () {
+        //Sets the player to not ready
+        ready = false;
+        sendForcedUnreadyPacket();
+    }
+
     private void sendReadyPacket () {
         if(isRoomFound) {
             GamePacket newPacket = new GamePacket(0, 0, GamePacket.TYPE_READY);
@@ -355,6 +410,11 @@ public class RoomFinder implements Runnable{
             GamePacket newPacket = new GamePacket(0, 0, GamePacket.TYPE_GAMESTART);
             packetQueue.add(newPacket);
         }
+    }
+
+    private void sendForcedUnreadyPacket () {
+        GamePacket newPacket = new GamePacket(0, 0, GamePacket.TYPE_UNREADY);
+        packetQueue.add(newPacket);
     }
 
     private void sendUnreadyPacket () {
@@ -392,6 +452,8 @@ public class RoomFinder implements Runnable{
         } catch (IOException e) {
             System.out.println("Connection failed, retrying in " + RETRY_DELAY + " seconds");
             retryTimer = System.currentTimeMillis() + RETRY_DELAY;
+        } catch (NullPointerException e) {
+            System.out.println("no ip address found yet");
         }
     }
 
@@ -405,6 +467,11 @@ public class RoomFinder implements Runnable{
         } else if(type == GamePacket.TYPE_RUNNER) {
             sendMovement(-1000,-1000);
         }
+    }
+
+    public void stop () {
+        running = false;
+        closeSocket();
     }
 
     private void closeSocket() {

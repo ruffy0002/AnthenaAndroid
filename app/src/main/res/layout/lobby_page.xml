@@ -67,6 +67,14 @@
             android:id="@+id/runnerbtn"
             android:layout_gravity="left|top" />
 
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="60dp"
+            android:text="Reconnect"
+            android:id="@+id/reconnectBtn"
+            android:layout_gravity="center_horizontal|top"
+            android:visibility="visible" />
+
     </FrameLayout>
 
 </FrameLayout>

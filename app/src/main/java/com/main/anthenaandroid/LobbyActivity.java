@@ -43,6 +43,45 @@ public class LobbyActivity extends Activity {
 
     public static RoomFinder rf = startPageActivity.rf;
     private Thread loadIntoGame;
+    private Thread directLoadIntoGame;
+
+    private void checkForDirectLoad() {
+        directLoadIntoGame = new Thread() {
+            private boolean changeActivity = true;
+            public void run() {
+                while(true){
+                    if(rf.checkToForceGameStart()) {
+                        if(rf.type == GamePacket.TYPE_RUNNER) {
+                            isRunner = true;
+                        } else {
+                            isRunner = false;
+                        }
+                        if(loadIntoGame != null) {
+                            loadIntoGame.interrupt();
+                        }
+                        break;
+                    }
+                    if(Thread.currentThread().isInterrupted()) {
+                        System.out.println("Stopped waiting for forced game start");
+                        changeActivity = false;
+                        break;
+                    }
+                }
+                if(changeActivity) {
+                    Intent i;
+                    if (isRunner) {
+                        i = new Intent(getApplicationContext(), runnerUI.class);
+                        startActivity(i);
+                    } else {
+
+                        i = new Intent(getApplicationContext(), stomperUI.class);
+                        startActivity(i);
+                    }
+                }
+            }
+        };
+        directLoadIntoGame.start();
+    }
 
     private void awaitGameStart() {
         loadIntoGame = new Thread() {
@@ -50,6 +89,9 @@ public class LobbyActivity extends Activity {
             public void run() {
                 while(true){
                     if(rf.checkGameStarted()) {
+                        if(directLoadIntoGame != null) {
+                            directLoadIntoGame.interrupt();
+                        }
                         break;
                     }
                     if(Thread.currentThread().isInterrupted()) {
@@ -127,25 +169,29 @@ public class LobbyActivity extends Activity {
             }
         });
 
-        /*
-        FrameLayout flWebPre = (FrameLayout) findViewById(R.id.Dummy);
+        final Button reconnectBtn = (Button) findViewById(R.id.reconnectBtn);
 
-        flWebPre.setOnTouchListener(new View.OnTouchListener() {
-
+        reconnectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v,MotionEvent event) {
-                DisplayMetrics displaymetrics = new DisplayMetrics();
-                getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-                int height = displaymetrics.heightPixels;
-                int width = displaymetrics.widthPixels;
-                float percentX = event.getX()/(float)height;
-                float percentY = event.getY()/(float)width;
-                sendStomp(percentX,percentY);
-                return true;
+            public void onClick(View v) {
+                rf.stop();
+                rf = new RoomFinder(RoomFinder.TYPE_RUNNER);
+                Thread thread = new Thread(rf);
+                thread.start();
+                if (!isRunner) {
+                    rf.switchPlayerType(RoomFinder.TYPE_STOMPER);
+                }
+                rf.sendUnreadyUponReconnect();
+                runnerBtn.setClickable(true);
+                stomperBtn.setClickable(true);
+                lockBtn.setBackgroundColor(Color.LTGRAY);
+                if(loadIntoGame != null) {
+                    loadIntoGame.interrupt();
+                }
             }
-        });*/
+        });
 
-
+        checkForDirectLoad();
     }
 
     @Override
